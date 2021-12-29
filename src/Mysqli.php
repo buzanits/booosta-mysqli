@@ -447,7 +447,7 @@ abstract class Mysqli extends \booosta\base\Module
 
       $null = $f['Null'] == 'YES';
 
-      $ret[] = new \booosta\Database\FW_tablefield($fieldname, $autoval, $primarykey, $default, $type, $param, $null);
+      $ret[] = new \booosta\database\FW_tablefield($fieldname, $autoval, $primarykey, $default, $type, $param, $null);
     }
 
     return $ret;
