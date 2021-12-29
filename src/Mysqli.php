@@ -4,6 +4,8 @@ namespace booosta\mysqli;
 
 abstract class Mysqli extends \booosta\base\Module
 {
+#  use moduletrait_mysqli;
+
   protected $host;
   protected $db;
   protected $user;
@@ -15,6 +17,7 @@ abstract class Mysqli extends \booosta\base\Module
   public $DB_AUTOVAL = 'INT AUTO_INCREMENT';
   public $DB_PRIMARYKEY = 'PRIMARY KEY';
 
+  const NIL = '___NIL___';
 
   public function __construct($host = null, $user = null, $pass = null, $database = null)
   {
@@ -56,7 +59,7 @@ abstract class Mysqli extends \booosta\base\Module
   # performs a query and returns errorcode (0=OK, -1=not OK)
   # also logs all actions if $do_log is not set to false
 
-  public function query($sql, $param = null, $do_log = true)
+  public function query($sql, $param = self::NIL, $do_log = true)
   {
     if(is_bool($param)):
       $do_log = $param;
@@ -99,7 +102,7 @@ abstract class Mysqli extends \booosta\base\Module
     if($this->config('log_mode') && $do_log) $this->log_db("prepare: $sql");
 
     $statement = $this->link->prepare($sql);
-    if($statement === false) \booosta\debug('mysqli prepare ERROR: ' . mysqli_error($this->link));
+    if($statement === false) \booosta\Framework::debug('mysqli prepare ERROR: ' . mysqli_error($this->link));
     return $statement;
   }
   
@@ -123,7 +126,7 @@ abstract class Mysqli extends \booosta\base\Module
   # performs a query and returns a list of values
   # representing all fields of the first record
 
-  public function query_list($sql, $param = null, $numindex = false)
+  public function query_list($sql, $param = self::NIL, $numindex = false)
   {
     if(is_bool($param)):
       $numindex = $param;
@@ -157,7 +160,7 @@ abstract class Mysqli extends \booosta\base\Module
   # performs a query and returns a list of values
   # representing the first field of all records
   
-  public function query_value_set($sql, $param = null)
+  public function query_value_set($sql, $param = self::NIL)
   {
     $ret = [];
   
@@ -177,7 +180,7 @@ abstract class Mysqli extends \booosta\base\Module
   # query_result()
   # returns a resultset of the given query
   
-  public function query_result($sql, $param = null)
+  public function query_result($sql, $param = self::NIL)
   {
     #if(!$this->link->ping()){ print 'MYSQL conn broken<br>';
     #\booosta\debug(unserialize($_SESSION['AUTH_USER']));}
@@ -185,7 +188,7 @@ abstract class Mysqli extends \booosta\base\Module
     #print_r( $this->link );
     #print "$sql<br>";
 
-    if($param !== null):
+    if($param !== self::NIL):
       $types = '';
       $values = [];
 
@@ -200,6 +203,11 @@ abstract class Mysqli extends \booosta\base\Module
       #\booosta\debug("types: $types"); \booosta\debug($values);
 
       $stmt = $this->prepare($sql);
+      if(!is_object($stmt)):
+        \booosta\Framework::debug("Error in prepare: $sql");
+        return null;  // at errors in sql prepare() returns false
+      endif;
+
       $stmt->bind_param($types, ...$values);
       $this->execute($stmt);
       $result = $stmt->get_result();
@@ -229,7 +237,7 @@ abstract class Mysqli extends \booosta\base\Module
   # query_arrays()
   # returns array of resultarrays of given query
   
-  public function query_arrays($sql, $param = null)
+  public function query_arrays($sql, $param = self::NIL)
   {
     $ret = [];
     $result = $this->query_result($sql, $param);
@@ -241,7 +249,7 @@ abstract class Mysqli extends \booosta\base\Module
   # query_index_array()
   # returns array with first query result as key and second as value
 
-  public function query_index_array($sql, $param = null)
+  public function query_index_array($sql, $param = self::NIL)
   {
     $ret = [];
 
@@ -268,7 +276,7 @@ abstract class Mysqli extends \booosta\base\Module
   # query_value()
   # returns the first field of the first record of given query
   
-  public function query_value($sql, $param = null)
+  public function query_value($sql, $param = self::NIL)
   {
     $result = $this->query_result($sql, $param);
     if ($this->link->error && $this->config('debug_mode')):
@@ -296,6 +304,7 @@ abstract class Mysqli extends \booosta\base\Module
   
   public function set_geo_coordinates($latitude, $longitude, $table, $id, $field = 'coordinates', $idfield = 'id')
   {
+    #\booosta\debug("lat: $latitude");
     $this->query("update `$table` set `$field`=ST_GeomFromText('POINT($latitude $longitude)', 4326) where `$idfield`=?", $id);
   }
 
