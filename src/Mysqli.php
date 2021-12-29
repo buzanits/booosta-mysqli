@@ -277,7 +277,8 @@ abstract class Mysqli extends \booosta\base\Module
     endif;
 
     if ($result->num_rows == 0) return ''; 
-    return array_shift($result->fetch_row());
+    $res = $result->fetch_row();
+    return array_shift($res);
   }
   
   
