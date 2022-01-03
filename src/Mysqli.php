@@ -61,9 +61,11 @@ abstract class Mysqli extends \booosta\base\Module
 
   public function query($sql, $param = self::NIL, $do_log = true)
   {
+    #\booosta\Framework::debug($sql);
+    #\booosta\Framework::debug($param);
     if(is_bool($param)):
       $do_log = $param;
-      $param = null;
+      $param = self::NIL;
     endif;
 
     if($this->config('log_mode') && $do_log) $this->log_db($sql);
@@ -184,6 +186,7 @@ abstract class Mysqli extends \booosta\base\Module
   {
     #if(!$this->link->ping()){ print 'MYSQL conn broken<br>';
     #\booosta\debug(unserialize($_SESSION['AUTH_USER']));}
+    #\booosta\Framework::debug($param);
     #print "debug1: $this->debug<br>";
     #print_r( $this->link );
     #print "$sql<br>";
