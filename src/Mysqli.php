@@ -191,7 +191,7 @@ abstract class Mysqli extends \booosta\base\Module
     #print_r( $this->link );
     #print "$sql<br>";
 
-    if($param !== self::NIL):
+    if($param !== self::NIL && (!is_array($param) || sizeof($param) > 0)):
       $types = '';
       $values = [];
 
