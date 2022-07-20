@@ -207,7 +207,7 @@ abstract class Mysqli extends \booosta\base\Module
 
       $stmt = $this->prepare($sql);
       if(!is_object($stmt)):
-        \booosta\Framework::debug("Error in prepare: $sql");
+        \booosta\Framework::debug("{$_SERVER['PHP_SELF']} Error in prepare: $sql");
         return null;  // at errors in sql prepare() returns false
       endif;
 
@@ -492,5 +492,5 @@ abstract class Mysqli extends \booosta\base\Module
 
 
   # Adjust debug_sql public function here
-  protected function debug_sql($text, $file = null) { \booosta\Framework::debug($text); }
+  protected function debug_sql($text, $file = null) { \booosta\Framework::debug($_SERVER['PHP_SELF'] . "\n" . $text); }
 }
