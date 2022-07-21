@@ -132,7 +132,7 @@ abstract class Mysqli extends \booosta\base\Module
   {
     if(is_bool($param)):
       $numindex = $param;
-      $param = null;
+      $param = self::NIL;
     endif;
 
     $assoc = $numindex ? MYSQLI_BOTH : MYSQLI_ASSOC;
