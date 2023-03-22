@@ -186,7 +186,7 @@ abstract class Mysqli extends \booosta\base\Module
   {
     #if(!$this->link->ping()){ print 'MYSQL conn broken<br>';
     #\booosta\debug(unserialize($_SESSION['AUTH_USER']));}
-    #\booosta\Framework::debug($param);
+    #\booosta\Framework::debug('param'); \booosta\Framework::debug($param);
     #print "debug1: $this->debug<br>";
     #print_r( $this->link );
     #print "$sql<br>";
@@ -211,18 +211,32 @@ abstract class Mysqli extends \booosta\base\Module
         return null;  // at errors in sql prepare() returns false
       endif;
 
-      $stmt->bind_param($types, ...$values);
-      $this->execute($stmt);
-      $result = $stmt->get_result();
+      try {
+        $stmt->bind_param($types, ...$values);
+        $this->execute($stmt);
+        $result = $stmt->get_result();
+      } catch(\Error | \Exception $e) {
+        $this->debug_sql($e->getMessage(), 'mysql.err');
+        $this->debug_sql($sql, 'mysql.err');
+        $this->debug_sql($types, 'mysql.err');
+        $this->debug_sql($values, 'mysql.err');
+      }
       #\booosta\debug($result);
     else:
-      $result = $this->link->query($sql);
+      try {
+        $result = $this->link->query($sql);
+      } catch(\Exception $e) {
+        $this->debug_sql($e->getMessage(), 'mysql.err');
+        $this->debug_sql($this->link->error, 'mysql.err');
+        $this->debug_sql($sql, 'mysql.err');
+      }
     endif;
 
     if($this->link->error && $this->config('debug_mode')):
       $this->debug_sql($this->link->error, 'mysql.err');
       $this->debug_sql($sql, 'mysql.err');
-    endif;  
+    endif; 
+
     return $result;
   }
   
@@ -492,5 +506,5 @@ abstract class Mysqli extends \booosta\base\Module
 
 
   # Adjust debug_sql public function here
-  protected function debug_sql($text, $file = null) { \booosta\Framework::debug($_SERVER['PHP_SELF'] . "\n" . $text); }
+  protected function debug_sql($text, $file = null) { \booosta\Framework::debug($_SERVER['PHP_SELF'] . "\n" . print_r($text, true)); }
 }
