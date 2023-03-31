@@ -9,7 +9,6 @@ abstract class Mysqli extends \booosta\base\Module
   protected $host;
   protected $db;
   protected $user;
-  protected $pass;
   public $link;
   public $debug;
 
@@ -39,11 +38,10 @@ abstract class Mysqli extends \booosta\base\Module
     $this->host = $host;
     $this->db   = $database;
     $this->user = $user;
-    $this->pass = $pass;
 
     if(is_object($host) && is_a($host, 'mysqli')) $this->link = $host;
-    else $this->link = new \mysqli($this->host, $this->user, $this->pass, $this->db);
-    #else { $this->link = new \mysqli($this->host, $this->user, $this->pass, $this->db); \booosta\debug("new connection"); }
+    else $this->link = new \mysqli($this->host, $this->user, $pass, $this->db);
+    #else { $this->link = new \mysqli($this->host, $this->user, $pass, $this->db); \booosta\debug("new connection"); }
 
     $this->link->set_charset('utf8');
     $this->link->autocommit(true);
