@@ -120,4 +120,55 @@ $result = $this->DB->query_index_array("select id, name from user");
 # $result[1] == 'alice'; $result[2] == 'bob';
 ```
 
-WORK IN PROGRESS
+### Transactions
+
+Mysql/MariaDB offer transactions on some storage engines (like InnoDB). You can send the statements dealing
+with transactions to the DB using `query()` or you use the methods of this module. The advantage of the latter
+is, that if some day transaction handling is changed in Mysql or MariaDB, this must be changed in the module
+only and not everywhere in the code.
+
+```
+# start transaction
+$this->DB->transaction_start();
+
+# commit current transaction
+$this->DB->transaction_commit();
+
+# rollback current transaction
+$this->DB->transaction_rollback();
+```
+
+### Geo coordinates
+
+Mysql/MariaDB have a special data type called `geometry`. It can be used to store coordinates on the earth.
+It is rather complicated to handle with SQL statements. While it is of course possible to deal with them with
+`query()` or `query_value()` and so on, there are methods in this module that make life easier:
+
+```
+# set_geo_coordinates($lat, $lon, $table, $id, $field = "coordinates", $idfield = "id")
+# Stores coordinates in a `geometry` field named `$field` in the table `$table`. The record already must exist
+# and have the ID `$id`. If the name of the ID field is not `id`, you have to provide it as `$idfield`.
+$this->DB->set_geo_coordinates(48.1619487, 16.3842647, 'address', 1911);
+
+# get_geo_coordinates($table, $id, $field = "coordinates", $idfield = "id")
+# Reads coordinates from a `geometry` field named `$field` from the table `$table` with ID `$id`. If the name of 
+# the ID field is not `id`, you have to provide it as `$idfield`.
+list($lat, $lon) = $this->DB->get_geo_coordinates('address', 1911);
+```
+
+### Additional methods
+
+```
+# DB_tablenames
+# returns an array of the names of all tables in the database. If the parameter is omitted, the currently
+# configures Database is used
+$tables = $this->DB->DB_tablenames($database = null)
+
+# DB_fields
+# returns a list of objects representing a column in the table
+$fields = $this->DB->DB_fields($tablename);
+$fields = $this->DB->DB_fields($database, $tablename);
+```
+
+
+
