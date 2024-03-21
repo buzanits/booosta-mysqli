@@ -66,11 +66,11 @@ abstract class Mysqli extends \booosta\base\Module
       $param = self::NIL;
     endif;
 
-    if($this->config('log_mode') && $do_log) $this->log_db($sql);
+    if($this->config('LOG_MODE') && $do_log) $this->log_db($sql);
   
     $this->query_result($sql, $param);
     if($this->link->error):
-      if($this->config('debug_mode')):
+      if($this->config('DEBUG_MODE')):
         $this->debug_sql($this->link->error, 'mysql.err');
         $this->debug_sql($sql, 'mysql.err');
       endif;
@@ -82,11 +82,11 @@ abstract class Mysqli extends \booosta\base\Module
 
   public function multi_query($sql, $do_log = true)
   {
-    if($this->config('log_mode') && $do_log) $this->log_db($sql);
+    if($this->config('LOG_MODE') && $do_log) $this->log_db($sql);
 
     $this->link->multi_query($sql);
     if($this->link->error):
-      if($this->config('debug_mode')):
+      if($this->config('DEBUG_MODE')):
         $this->debug_sql($this->link->error, 'mysql.err');
         $this->debug_sql($sql, 'mysql.err');
       endif;
@@ -99,7 +99,7 @@ abstract class Mysqli extends \booosta\base\Module
 
   public function prepare($sql, $do_log = true)
   {
-    if($this->config('log_mode') && $do_log) $this->log_db("prepare: $sql");
+    if($this->config('LOG_MODE') && $do_log) $this->log_db("prepare: $sql");
 
     $statement = $this->link->prepare($sql);
     if($statement === false) \booosta\Framework::debug('mysqli prepare ERROR: ' . mysqli_error($this->link));
@@ -110,7 +110,7 @@ abstract class Mysqli extends \booosta\base\Module
   {
     $statement->execute();
     if($this->link->error):
-      if($this->config('debug_mode')):
+      if($this->config('DEBUG_MODE')):
         $this->debug_sql($this->link->error, 'mysql.err');
         $this->debug_sql($sql, 'mysql.err');
       endif;
@@ -136,7 +136,7 @@ abstract class Mysqli extends \booosta\base\Module
     $assoc = $numindex ? MYSQLI_BOTH : MYSQLI_ASSOC;
 
     $res = $this->query_result($sql, $param);
-    if($this->link->error && $this->config('debug_mode')):
+    if($this->link->error && $this->config('DEBUG_MODE')):
       $this->debug_sql($this->link->error, 'mysql.err');
       $this->debug_sql($sql, 'mysql.err');
     endif;  
@@ -165,7 +165,7 @@ abstract class Mysqli extends \booosta\base\Module
     $ret = [];
   
     $result = $this->query_result($sql, $param);
-    if($this->link->error && $this->config('debug_mode')):
+    if($this->link->error && $this->config('DEBUG_MODE')):
       $this->debug_sql($this->link->error, 'mysql.err');
       $this->debug_sql($sql, 'mysql.err');
     endif;  
@@ -230,7 +230,7 @@ abstract class Mysqli extends \booosta\base\Module
       }
     endif;
 
-    if($this->link->error && $this->config('debug_mode')):
+    if($this->link->error && $this->config('DEBUG_MODE')):
       $this->debug_sql($this->link->error, 'mysql.err');
       $this->debug_sql($sql, 'mysql.err');
     endif; 
@@ -294,7 +294,7 @@ abstract class Mysqli extends \booosta\base\Module
   public function query_value($sql, $param = self::NIL)
   {
     $result = $this->query_result($sql, $param);
-    if ($this->link->error && $this->config('debug_mode')):
+    if ($this->link->error && $this->config('DEBUG_MODE')):
       $this->debug_sql($this->link->error, 'mysql.err');
       $this->debug_sql($sql, 'mysql.err');
     endif;
@@ -367,7 +367,7 @@ abstract class Mysqli extends \booosta\base\Module
     $sql = "insert into `$table` ($fieldlist) values ($varlist_stmt)";
 
     $result .= "\$statement = \$this->DB->prepare(\"$sql\", \$log);\n";
-    $result .= "    if(\$this->config('log_mode') && \$log) \$this->DB->log_db(\"bind_param: '$varlist_type', \" . $loglist_bind);\n";
+    $result .= "    if(\$this->config('LOG_MODE') && \$log) \$this->DB->log_db(\"bind_param: '$varlist_type', \" . $loglist_bind);\n";
     $result .= "    \$statement->bind_param('$varlist_type', $varlist_bind);\n";
     $result .= '    $res = $this->DB->execute($statement);';
 
@@ -410,7 +410,7 @@ abstract class Mysqli extends \booosta\base\Module
     $sql = "update `$table` set $updatelist_stmt where $rowidentifier_stmt";
 
     $result .= "\$statement = \$this->DB->prepare(\"$sql\");\n";
-    $result .= "    if(\$this->config('log_mode') && \$log) \$this->DB->log_db(\"bind_param: '$updatelist_type$rowidentifier_type', \" . $loglist_bind);\n";
+    $result .= "    if(\$this->config('LOG_MODE') && \$log) \$this->DB->log_db(\"bind_param: '$updatelist_type$rowidentifier_type', \" . $loglist_bind);\n";
     $result .= "    \$statement->bind_param('$updatelist_type$rowidentifier_type', $updatelist_bind$rowidentifier_bind);\n";
     $result .= '    $res = $this->DB->execute($statement);';
 
