@@ -1,6 +1,8 @@
 <?php
 namespace booosta\mysqli;
-\booosta\Framework::init_module('mysqli');
+
+use \booosta\Framework as b;
+b::init_module('mysqli');
 
 abstract class Mysqli extends \booosta\base\Module
 {
